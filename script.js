@@ -37,7 +37,7 @@ d3.csv(
 					return 4;
 				}
 			})
-			.attr("fill","blue")
+			.attr("fill","deepskyblue")
 			.attr("stroke","black");
 		svg.selectAll('text')
 			.data(filtered_cities)
@@ -57,6 +57,67 @@ d3.csv(
 			
 
 });
+
+let buildings;
+d3.csv(
+	'buildings.csv', d3.autoType).then(data=>{
+		buildings = data;
+		console.log('buildings', buildings);
+	buildings.sort((a,b)=> b.height_m - a.height_m);
+	
+	const width = 500;
+	const height = 500;
+	const svg = d3.select('.building-chart')
+		.append('svg')
+		.attr('width', width)
+		.attr('height', height);
+
+	svg.selectAll('.bchart')
+		.attr("class","rectangles")
+		.data(buildings)
+		.enter()
+		.append('rect')
+		.attr("width",(d,_)=>d.height_px)
+		.attr("height",20)
+		.attr("x",160)
+		.attr("y",(_,i)=>i*25)
+		.attr("fill","orange")
+		.attr("text",(d,_)=>d.height_ft)
+		.attr("stroke","black")
+		.on("click",function(event, d){
+			document.getElementById("building-image").src=(d.image);
+			d3.select('.building-name').text(d.building);
+			d3.select('.height').text(d.height_ft);
+			d3.select('.city').text(d.city);
+			d3.select('.country').text(d.country);
+			d3.select('.floors').text(d.floors);
+			d3.select('.completed').text(d.completed);
+		});
+
+	svg.selectAll('.blabels')
+		.data(buildings)
+		.enter()
+		.append("text")
+		.attr("x",150)
+		.attr("y",(_,i)=>(i*25)+14)
+		.text((d,_)=>d.building)
+		.attr("text-anchor","end")
+		.attr("font-size", 11);
+
+	svg.selectAll('.bchart')
+		.data(buildings)
+		.enter()
+		.append("text")
+		.attr("x",(d,_)=>d.height_px +150)
+		.attr("y",(_,i)=>i*25+14)
+		.text((d,_)=>d.height_ft+" ft")
+		.attr("text-anchor","end")
+		.attr("font-size", 11)
+		.attr("fill","white");
+
+});
+
+
 /*assign class names in svg to reference in first svg.selectAll("class name")
 
 for  image url change
